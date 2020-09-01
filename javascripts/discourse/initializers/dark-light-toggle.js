@@ -6,6 +6,7 @@ export default {
 
   initialize() {
 
+    // get the two <link> elements that hold the dark/light variables
     let lightTheme = document.getElementsByClassName("light-scheme")[0];
     let darkTheme = document.getElementsByClassName("dark-scheme")[0];
 
@@ -25,6 +26,7 @@ export default {
       localStorage.setItem('userToggledScheme', 'light')
     };
 
+    // loads user setting from local storage if there is one upon init
     let loadDarkOrLight = function() {
       let savedSchemeChoice = localStorage.getItem("userToggledScheme");
       
@@ -45,6 +47,7 @@ export default {
 
     loadDarkOrLight();
 
+    // handles the toggle function
     let toggleDL = function() { 
       let page = document.getElementsByTagName("html")[0];
       let style = window
@@ -58,6 +61,7 @@ export default {
         switchToLight();
       }
   
+      // gets the icon inside of the dar-light-toggle li element
       let darkLightToggle = document.getElementsByClassName(
         "dark-light-toggle"
       )[0].children[0].children[0];
@@ -76,13 +80,17 @@ export default {
     withPluginApi("0.8", api => {
       api.addQuickAccessProfileItem({
         icon: "adjust",
+        // this action needs to exist in the user-menu widget to work
         action: "toggleDarkLight",
+        // ideally this title would be dynamic but I dont
+        // think this is currently possible
         content: I18n.t(themePrefix("toggle_scheme")),
         className: 'dark-light-toggle'
       })
 
       api.reopenWidget("user-menu", {
-
+        // adds toggleDarkLight function as an action to the user menu
+        // this calls toggleDL from above
         toggleDarkLight() {
           toggleDL();
         }
