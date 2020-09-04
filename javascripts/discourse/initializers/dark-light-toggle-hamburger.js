@@ -1,6 +1,7 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import I18n from "I18n";
 import { h } from "virtual-dom";
+import { iconNode } from "discourse-common/lib/icon-library";
 
 export default {
   name: "dark-light-toggle-hamburger-initializer",
@@ -84,11 +85,18 @@ export default {
             .getPropertyValue("--scheme-type")
             .trim();
 
-          let toggleText = document.querySelector(".dark-light-toggle");
+          let toggleText = document.querySelector(".dark-light-toggle").children[2];
           toggleText.textContent =
             style === "light"
               ? I18n.t(themePrefix("toggle_dark_mode"))
               : I18n.t(themePrefix("toggle_light_mode"));
+          
+          let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
+
+          schemeIcons.forEach((icon) => {
+            icon.classList.toggle('show-scheme-icon')
+          })
+
         },
 
         schemeSelectorHtml(currentScheme) {
@@ -96,7 +104,16 @@ export default {
             currentScheme === "light" ? "Dark Mode" : "Light Mode";
           return h(
             "li",
-            h("a.widget-link.dark-light-toggle", `Toggle ${schemeName}`)
+            h("a.widget-link.dark-light-toggle",[
+              iconNode("far-sun", {
+                class: currentScheme === "dark" ? "scheme-icon show-scheme-icon" : "scheme-icon"
+              }),
+              iconNode("far-moon", {
+                class: currentScheme === "light" ? "scheme-icon show-scheme-icon" : "scheme-icon"
+              }),
+              h("p",`Toggle ${schemeName}`)
+              ]
+            )
           );
         },
 
