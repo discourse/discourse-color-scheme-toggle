@@ -11,6 +11,10 @@ export default {
     let lightTheme = document.querySelector(".light-scheme");
     let darkTheme = document.querySelector(".dark-scheme");
 
+    if (!lightTheme || !darkTheme) {
+      return false;
+    }
+
     let switchToDark = function () {
       lightTheme.media = "none";
       lightTheme.classList.remove("user-selected-theme");
