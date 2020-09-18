@@ -1,3 +1,4 @@
 en:
-  toggle_dark_mode: Toggle Dark Mode
-  toggle_light_mode: Toggle Light Mode
+  toggle_dark_mode: Dark Scheme
+  toggle_light_mode: Light Scheme
+  toggle_auto_mode: Auto
