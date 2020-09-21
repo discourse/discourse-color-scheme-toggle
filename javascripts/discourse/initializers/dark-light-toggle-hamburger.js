@@ -58,6 +58,10 @@ export default {
       
       let savedSchemeChoice = cookie("userSelectedScheme");
 
+      if (!savedSchemeChoice) {
+        return false;
+      }
+
       if (savedSchemeChoice === "light") {
         darkTheme.media = "none";
         darkTheme.classList.remove("user-selected-theme");
@@ -154,7 +158,7 @@ export default {
 
         html() {
           return h("a.widget-link.dark-light-toggle",[
-            iconNode("tv", {
+            iconNode("sync-alt", {
               class: "show-scheme-icon"
             }),
             h("p", I18n.t(themePrefix("toggle_auto_mode")))
