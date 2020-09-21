@@ -1,9 +1,12 @@
 .color-scheme-toggle {
   display: flex;
   flex-direction: row;
+  li {
+    flex-grow: 1;
+  }
 }
 
-.widget-link.dark-light-toggle{
+.widget-link.dark-light-toggle {
   display: flex !important;
   flex-direction: row;
   align-items: center;
