@@ -13,11 +13,16 @@ export default {
     let darkTheme = document.querySelector(".dark-scheme");
 
     if (!lightTheme || !darkTheme) {
+      console.log(
+        `Toggle Dark/Light mode hamburger widget not loaded:
+Have you selected two different themes for your dark/light schemes in user preferences -> interface?
+        `
+        )
       return false;
     }
 
     let switchToDark = function () {
-      cookie("userSelectedScheme","dark");
+      cookie("userSelectedScheme","dark", {path: "/", expires: 9999, secure: true});
       lightTheme.media = "none";
       lightTheme.classList.remove("user-selected-theme");
       darkTheme.media = "all";
@@ -25,7 +30,7 @@ export default {
     };
 
     let switchToLight = function () {
-      cookie("userSelectedScheme","light");
+      cookie("userSelectedScheme","light", {path: "/", expires: 9999, secure: true});
       darkTheme.media = "none";
       darkTheme.classList.remove("user-selected-theme");
       lightTheme.media = "all";
@@ -33,7 +38,7 @@ export default {
     };
 
     let switchToAuto = function () {
-      cookie("userSelectedScheme","auto");
+      cookie("userSelectedScheme","auto", {path: "/", expires: 9999, secure: true});
       darkTheme.media = "(prefers-color-scheme: dark)";
       darkTheme.classList.remove("user-selected-theme");
       lightTheme.media = "all";
@@ -139,21 +144,42 @@ export default {
       api.createWidget("auto-selector", {
         buildKey: attrs => "auto-selector",
 
-        click() {
-          switchToAuto();
+        defaultState() {
+          if (window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return { autoScheme: "dark" };
+          } else {
+            return { autoScheme: "light" }
+          }
 
+        },
+
+        click() {
           let page = document.getElementsByTagName("html")[0];
-          let style = window
+          let currentScheme = window
             .getComputedStyle(page)
             .getPropertyValue("--scheme-type")
             .trim();
 
-          let toggleText = document.querySelector(".dark-light-toggle").children[2];
-          toggleText.textContent =
-            style === "light"
-              ? I18n.t(themePrefix("toggle_dark_mode"))
-              : I18n.t(themePrefix("toggle_light_mode"));
+          // only toggle if auto changes the current scheme
+          if (currentScheme !== this.state.autoScheme) {
+            
+            switchToAuto();
 
+            let toggleText = document.querySelector(".dark-light-toggle").children[2];
+
+            toggleText.textContent =
+            this.state.autoScheme === "light"
+                ? I18n.t(themePrefix("toggle_dark_mode"))
+                : I18n.t(themePrefix("toggle_light_mode"));
+            
+            let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
+
+            schemeIcons.forEach((icon) => {
+              icon.classList.toggle('show-scheme-icon')
+            });
+
+          }
         },
 
         html() {
