@@ -170,23 +170,39 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
 
         click() {
-          // dont run if auto is already selected
-          if (cookie("userSelectedScheme") === "auto") return false;
+          // if auto is currently selected, turn auto off
+          // and set userSelectedScheme to the original color scheme
+          if (cookie("userSelectedScheme") === "auto") {
+            if (this.state.autoScheme === "light") {
+              switchToLight();
+            } else {
+              switchToDark();
+            }
+          } else {
+            switchToAuto();
 
-          switchToAuto();
+            let page = document.getElementsByTagName("html")[0];
+            let currentScheme = window
+              .getComputedStyle(page)
+              .getPropertyValue("--scheme-type")
+              .trim();
 
-          let toggleText = document.querySelector(".dark-light-toggle").children[2];
+            // only toggle icons + text if auto changes the current scheme
+            if (currentScheme !== this.state.autoScheme) {
+              let toggleText = document.querySelector(".dark-light-toggle").children[2];
 
-          toggleText.textContent =
-          this.state.autoScheme === "light"
-              ? I18n.t(themePrefix("toggle_dark_mode"))
-              : I18n.t(themePrefix("toggle_light_mode"));
-          
-          let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
+              toggleText.textContent =
+              this.state.autoScheme === "light"
+                  ? I18n.t(themePrefix("toggle_dark_mode"))
+                  : I18n.t(themePrefix("toggle_light_mode"));
 
-          schemeIcons.forEach((icon) => {
-            icon.classList.toggle('show-scheme-icon')
-          });
+              let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
+
+              schemeIcons.forEach((icon) => {
+                icon.classList.toggle('show-scheme-icon')
+              });
+            }
+          }
         },
 
         html() {
