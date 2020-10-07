@@ -159,6 +159,16 @@ Have you selected two different themes for your dark/light schemes in user prefe
       api.createWidget("auto-selector", {
         buildKey: attrs => "auto-selector",
 
+        defaultState() {
+          if (window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return { autoScheme: "dark" };
+          } else {
+            return { autoScheme: "light" }
+          }
+
+        },
+
         click() {
           // dont run if auto is already selected
           if (cookie("userSelectedScheme") === "auto") return false;
