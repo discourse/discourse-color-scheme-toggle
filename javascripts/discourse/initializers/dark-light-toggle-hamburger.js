@@ -3,6 +3,7 @@ import I18n from "I18n";
 import { h } from "virtual-dom";
 import { iconNode } from "discourse-common/lib/icon-library";
 import cookie from "discourse/lib/cookie";
+import { observes } from "discourse-common/utils/decorators";
 
 export default {
   name: "dark-light-toggle-hamburger-initializer",
@@ -13,9 +14,9 @@ export default {
     let darkTheme = document.querySelector(".dark-scheme");
 
     if (!lightTheme || !darkTheme) {
-      console.log(
+      console.warn(
         `Toggle Dark/Light mode hamburger widget not loaded:
-Have you selected two different themes for your dark/light schemes in user preferences -> interface?
+Have you selected two different themes for your dark/light schemes in user preferences? "u/preferences/interface"
         `
         )
       return false;
@@ -88,6 +89,20 @@ Have you selected two different themes for your dark/light schemes in user prefe
     loadDarkOrLight();
 
     withPluginApi("0.8", api => {
+
+      // this will reset the scheme choice to 'auto' whenever a user
+      // changes their color scheme preferences in the user interface
+      api.modifyClass("controller:preferences/interface", {
+        @observes("selectedColorSchemeId")
+        onChangeColorScheme() {
+          switchToAuto();
+        },
+        @observes("selectedDarkColorSchemeId")
+        onChangeDarkColorScheme() {
+          switchToAuto();
+        }
+      });
+
       api.createWidget("dark-light-selector", {
         buildKey: attrs => "dark-light-selector",
 
@@ -144,47 +159,33 @@ Have you selected two different themes for your dark/light schemes in user prefe
       api.createWidget("auto-selector", {
         buildKey: attrs => "auto-selector",
 
-        defaultState() {
-          if (window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return { autoScheme: "dark" };
-          } else {
-            return { autoScheme: "light" }
-          }
-
-        },
-
         click() {
-          let page = document.getElementsByTagName("html")[0];
-          let currentScheme = window
-            .getComputedStyle(page)
-            .getPropertyValue("--scheme-type")
-            .trim();
+          // dont run if auto is already selected
+          if (cookie("userSelectedScheme") === "auto") return false;
 
-          // only toggle if auto changes the current scheme
-          if (currentScheme !== this.state.autoScheme) {
-            
-            switchToAuto();
+          switchToAuto();
 
-            let toggleText = document.querySelector(".dark-light-toggle").children[2];
+          let toggleText = document.querySelector(".dark-light-toggle").children[2];
 
-            toggleText.textContent =
-            this.state.autoScheme === "light"
-                ? I18n.t(themePrefix("toggle_dark_mode"))
-                : I18n.t(themePrefix("toggle_light_mode"));
-            
-            let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
+          toggleText.textContent =
+          this.state.autoScheme === "light"
+              ? I18n.t(themePrefix("toggle_dark_mode"))
+              : I18n.t(themePrefix("toggle_light_mode"));
+          
+          let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
 
-            schemeIcons.forEach((icon) => {
-              icon.classList.toggle('show-scheme-icon')
-            });
-
-          }
+          schemeIcons.forEach((icon) => {
+            icon.classList.toggle('show-scheme-icon')
+          });
         },
 
         html() {
+          let icon = cookie("userSelectedScheme") === "auto" ?
+          "check-square" :
+          "far-square";
+
           return h("a.widget-link.dark-light-toggle",[
-            iconNode("sync-alt", {
+            iconNode(icon, {
               class: "show-scheme-icon"
             }),
             h("p", I18n.t(themePrefix("toggle_auto_mode")))
