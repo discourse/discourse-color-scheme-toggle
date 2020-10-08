@@ -2,3 +2,5 @@ en:
   toggle_dark_mode: Toggle Dark Scheme
   toggle_light_mode: Toggle Light Scheme
   toggle_auto_mode: Auto Detect
+  auto_mode_description: Use your system's light or dark mode settings
+  toggle_description: Toggle dark or light scheme

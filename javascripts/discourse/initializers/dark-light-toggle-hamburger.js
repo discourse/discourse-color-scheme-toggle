@@ -144,13 +144,13 @@ Have you selected two different themes for your dark/light schemes in user prefe
             state.currentScheme === "light" ? "toggle_dark_mode" : "toggle_light_mode";
 
           return h("a.widget-link.dark-light-toggle",[
-            iconNode("far-sun", {
+            iconNode("sun", {
               class: state.currentScheme === "dark" ? "scheme-icon show-scheme-icon" : "scheme-icon"
             }),
             iconNode("far-moon", {
               class: state.currentScheme === "light" ? "scheme-icon show-scheme-icon" : "scheme-icon"
             }),
-            h("p", I18n.t(themePrefix(schemeName)))
+            h("p", {title: I18n.t(themePrefix("toggle_description")) }, I18n.t(themePrefix(schemeName)))
             ]
           );
         }
@@ -170,6 +170,29 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
 
         click() {
+          // toggle text and icons code
+          let page = document.getElementsByTagName("html")[0];
+          let currentScheme = window
+            .getComputedStyle(page)
+            .getPropertyValue("--scheme-type")
+            .trim();
+
+          // only toggle icons + text if auto changes the current scheme
+          if (currentScheme !== this.state.autoScheme) {
+            let toggleText = document.querySelector(".dark-light-toggle").children[2];
+
+            toggleText.textContent =
+            this.state.autoScheme === "light"
+                ? I18n.t(themePrefix("toggle_dark_mode"))
+                : I18n.t(themePrefix("toggle_light_mode"));
+
+            let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
+
+            schemeIcons.forEach((icon) => {
+              icon.classList.toggle('show-scheme-icon')
+            });
+          }
+          
           // if auto is currently selected, turn auto off
           // and set userSelectedScheme to the original color scheme
           if (cookie("userSelectedScheme") === "auto") {
@@ -180,28 +203,6 @@ Have you selected two different themes for your dark/light schemes in user prefe
             }
           } else {
             switchToAuto();
-
-            let page = document.getElementsByTagName("html")[0];
-            let currentScheme = window
-              .getComputedStyle(page)
-              .getPropertyValue("--scheme-type")
-              .trim();
-
-            // only toggle icons + text if auto changes the current scheme
-            if (currentScheme !== this.state.autoScheme) {
-              let toggleText = document.querySelector(".dark-light-toggle").children[2];
-
-              toggleText.textContent =
-              this.state.autoScheme === "light"
-                  ? I18n.t(themePrefix("toggle_dark_mode"))
-                  : I18n.t(themePrefix("toggle_light_mode"));
-
-              let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
-
-              schemeIcons.forEach((icon) => {
-                icon.classList.toggle('show-scheme-icon')
-              });
-            }
           }
         },
 
@@ -214,7 +215,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
             iconNode(icon, {
               class: "show-scheme-icon"
             }),
-            h("p", I18n.t(themePrefix("toggle_auto_mode")))
+            h("p", {title: I18n.t(themePrefix("auto_mode_description"))}, I18n.t(themePrefix("toggle_auto_mode")))
             ]
           );
         }
