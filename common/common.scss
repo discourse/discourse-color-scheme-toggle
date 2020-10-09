@@ -6,7 +6,16 @@
   }
 }
 
-.widget-link.dark-light-toggle {
+.widget-link.dark-light-toggle .scheme-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  p {
+    margin: 0;
+  }
+}
+
+.widget-link.auto-toggle {
   display: flex !important;
   flex-direction: row;
   align-items: center;
@@ -16,10 +25,9 @@
 }
 
 .scheme-icon {
-  display: none;
+  margin-right: 0.25em;
 }
 
-.show-scheme-icon {
-  display: block;
-  margin-right: 0.25em;
+.scheme-toggle.hidden {
+  display: none !important;
 }
