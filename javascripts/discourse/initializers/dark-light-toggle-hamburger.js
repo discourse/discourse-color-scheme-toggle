@@ -179,21 +179,13 @@ Have you selected two different themes for your dark/light schemes in user prefe
         }
       });
 
-      api.createWidget("color-scheme-toggle", {
-        buildKey: attrs => "color-scheme-toggle",
-
-        html() {
-          return h("ul.color-scheme-toggle", [
-            h("li", this.attach("dark-light-selector")),
-            h("li", this.attach("auto-selector"))
-          ])
-        }
-      });
-
       api.decorateWidget("menu-links:before", helper => {
         if (helper.attrs.name === "footer-links") {
           return [
-            h("", helper.widget.attach("color-scheme-toggle")),
+            h("ul.color-scheme-toggle",[
+              h("li", helper.widget.attach("dark-light-selector")),
+              h("li", helper.widget.attach("auto-selector"))
+            ]),
             h(".clearfix"),
             h("hr")
           ];
