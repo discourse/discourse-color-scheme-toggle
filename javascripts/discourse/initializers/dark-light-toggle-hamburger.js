@@ -46,14 +46,8 @@ Have you selected two different themes for your dark/light schemes in user prefe
       lightTheme.classList.remove("user-selected-theme");
     };
 
-    let toggleDarkLight = function () {
-      let page = document.getElementsByTagName("html")[0];
-      let style = window
-        .getComputedStyle(page)
-        .getPropertyValue("--scheme-type")
-        .trim();
-      
-      if (style === "light") {
+    let toggleDarkLight = function () {      
+      if (lightTheme.media === "all") {
         switchToDark();
       } else {
         switchToLight();
@@ -106,53 +100,34 @@ Have you selected two different themes for your dark/light schemes in user prefe
       api.createWidget("dark-light-selector", {
         buildKey: attrs => "dark-light-selector",
 
-        defaultState() {
-          let page = document.getElementsByTagName("html")[0];
-          let style = window
-            .getComputedStyle(page)
-            .getPropertyValue("--scheme-type")
-            .trim();
-
-          return { currentScheme: style };
-        },
-
         click() {
           toggleDarkLight();
-
-          let page = document.getElementsByTagName("html")[0];
-          let style = window
-            .getComputedStyle(page)
-            .getPropertyValue("--scheme-type")
-            .trim();
-
-          let toggleText = document.querySelector(".dark-light-toggle").children[2];
-          toggleText.textContent =
-            style === "light"
-              ? I18n.t(themePrefix("toggle_dark_mode"))
-              : I18n.t(themePrefix("toggle_light_mode"));
-          
-          let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
-
-          schemeIcons.forEach((icon) => {
-            icon.classList.toggle('show-scheme-icon')
-          })
-
         },
 
         html(attrs, state) {
-          let schemeName =
-            state.currentScheme === "light" ? "toggle_dark_mode" : "toggle_light_mode";
+          let style = lightTheme.media === "all" ? "light" : "dark";
+
+          let lightClass = style === "light" ? "scheme-toggle.hidden" : "scheme-toggle";
+          let darkClass = style === "dark" ? "scheme-toggle.hidden" : "scheme-toggle";
 
           return h("a.widget-link.dark-light-toggle",[
-            iconNode("sun", {
-              class: state.currentScheme === "dark" ? "scheme-icon show-scheme-icon" : "scheme-icon"
-            }),
-            iconNode("far-moon", {
-              class: state.currentScheme === "light" ? "scheme-icon show-scheme-icon" : "scheme-icon"
-            }),
-            h("p", {title: I18n.t(themePrefix("toggle_description")) }, I18n.t(themePrefix(schemeName)))
-            ]
-          );
+            h(`div.${lightClass}`, [
+              iconNode("sun", {
+                class: "scheme-icon",
+              }),
+              h("p", {
+                title: I18n.t(themePrefix("toggle_description")) 
+              }, I18n.t(themePrefix("toggle_light_mode")))
+            ]),
+            h(`div.${darkClass}`,[
+              iconNode("far-moon", {
+                class: "scheme-icon",
+              }),
+              h("p", {
+                title: I18n.t(themePrefix("toggle_description")) 
+              }, I18n.t(themePrefix("toggle_dark_mode")))
+            ])
+          ]);
         }
       });
 
@@ -160,7 +135,12 @@ Have you selected two different themes for your dark/light schemes in user prefe
         buildKey: attrs => "auto-selector",
 
         defaultState() {
+          // checks to see what the autoScheme should be
+          // I do this by checking if the users sytem setting is in dark mode
+          // if the system setting is in dark mode, then the 'auto' scheme should be dark
+          // and light if it is not
           if (window.matchMedia &&
+              // this line checks if the user's system is currently in dark mode
               window.matchMedia('(prefers-color-scheme: dark)').matches) {
             return { autoScheme: "dark" };
           } else {
@@ -169,30 +149,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
         },
 
-        click() {
-          // toggle text and icons code
-          let page = document.getElementsByTagName("html")[0];
-          let currentScheme = window
-            .getComputedStyle(page)
-            .getPropertyValue("--scheme-type")
-            .trim();
-
-          // only toggle icons + text if auto changes the current scheme
-          if (currentScheme !== this.state.autoScheme) {
-            let toggleText = document.querySelector(".dark-light-toggle").children[2];
-
-            toggleText.textContent =
-            this.state.autoScheme === "light"
-                ? I18n.t(themePrefix("toggle_dark_mode"))
-                : I18n.t(themePrefix("toggle_light_mode"));
-
-            let schemeIcons = Array.prototype.slice.call(document.querySelectorAll('.scheme-icon'));
-
-            schemeIcons.forEach((icon) => {
-              icon.classList.toggle('show-scheme-icon')
-            });
-          }
-          
+        click() {          
           // if auto is currently selected, turn auto off
           // and set userSelectedScheme to the original color scheme
           if (cookie("userSelectedScheme") === "auto") {
@@ -201,6 +158,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
             } else {
               switchToDark();
             }
+
           } else {
             switchToAuto();
           }
@@ -211,9 +169,9 @@ Have you selected two different themes for your dark/light schemes in user prefe
           "check-square" :
           "far-square";
 
-          return h("a.widget-link.dark-light-toggle",[
+          return h("a.widget-link.auto-toggle",[
             iconNode(icon, {
-              class: "show-scheme-icon"
+              class: "scheme-icon"
             }),
             h("p", {title: I18n.t(themePrefix("auto_mode_description"))}, I18n.t(themePrefix("toggle_auto_mode")))
             ]
@@ -221,13 +179,21 @@ Have you selected two different themes for your dark/light schemes in user prefe
         }
       });
 
+      api.createWidget("color-scheme-toggle", {
+        buildKey: attrs => "color-scheme-toggle",
+
+        html() {
+          return h("ul.color-scheme-toggle", [
+            h("li", this.attach("dark-light-selector")),
+            h("li", this.attach("auto-selector"))
+          ])
+        }
+      });
+
       api.decorateWidget("menu-links:before", helper => {
         if (helper.attrs.name === "footer-links") {
           return [
-            h("ul.color-scheme-toggle", [
-              h("li",helper.widget.attach("dark-light-selector")),
-              h("li",helper.widget.attach("auto-selector"))
-            ]),
+            h("", helper.widget.attach("color-scheme-toggle")),
             h(".clearfix"),
             h("hr")
           ];
