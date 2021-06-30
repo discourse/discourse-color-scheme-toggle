@@ -1,4 +1,4 @@
-svg_icons: 
-  default: 'moon|sun'
-  type: 'list'
-  list_type: 'compact'
+svg_icons:
+  default: "moon|sun"
+  type: "list"
+  list_type: "compact"

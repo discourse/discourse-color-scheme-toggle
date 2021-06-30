@@ -1,3 +1,5 @@
+/* global themePrefix */
+
 import { withPluginApi } from "discourse/lib/plugin-api";
 import I18n from "I18n";
 import { h } from "virtual-dom";
@@ -14,16 +16,21 @@ export default {
     let darkTheme = document.querySelector(".dark-scheme");
 
     if (!lightTheme || !darkTheme) {
+      // eslint-disable-next-line no-console
       console.warn(
         `Toggle Dark/Light mode hamburger widget not loaded:
 Have you selected two different themes for your dark/light schemes in user preferences? "u/preferences/interface"
         `
-        )
+      );
       return false;
     }
 
     let switchToDark = function () {
-      cookie("userSelectedScheme","dark", {path: "/", expires: 9999, secure: true});
+      cookie("userSelectedScheme", "dark", {
+        path: "/",
+        expires: 9999,
+        secure: true,
+      });
       lightTheme.media = "none";
       lightTheme.classList.remove("user-selected-theme");
       darkTheme.media = "all";
@@ -31,7 +38,11 @@ Have you selected two different themes for your dark/light schemes in user prefe
     };
 
     let switchToLight = function () {
-      cookie("userSelectedScheme","light", {path: "/", expires: 9999, secure: true});
+      cookie("userSelectedScheme", "light", {
+        path: "/",
+        expires: 9999,
+        secure: true,
+      });
       darkTheme.media = "none";
       darkTheme.classList.remove("user-selected-theme");
       lightTheme.media = "all";
@@ -39,14 +50,18 @@ Have you selected two different themes for your dark/light schemes in user prefe
     };
 
     let switchToAuto = function () {
-      cookie("userSelectedScheme","auto", {path: "/", expires: 9999, secure: true});
+      cookie("userSelectedScheme", "auto", {
+        path: "/",
+        expires: 9999,
+        secure: true,
+      });
       darkTheme.media = "(prefers-color-scheme: dark)";
       darkTheme.classList.remove("user-selected-theme");
       lightTheme.media = "all";
       lightTheme.classList.remove("user-selected-theme");
     };
 
-    let toggleDarkLight = function () {      
+    let toggleDarkLight = function () {
       if (lightTheme.media === "all") {
         switchToDark();
       } else {
@@ -55,7 +70,6 @@ Have you selected two different themes for your dark/light schemes in user prefe
     };
 
     let loadDarkOrLight = function () {
-      
       let savedSchemeChoice = cookie("userSelectedScheme");
 
       if (!savedSchemeChoice) {
@@ -82,8 +96,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
     loadDarkOrLight();
 
-    withPluginApi("0.8", api => {
-
+    withPluginApi("0.8", (api) => {
       // this will reset the scheme choice to 'auto' whenever a user
       // changes their color scheme preferences in the user interface
       api.modifyClass("controller:preferences/interface", {
@@ -94,62 +107,73 @@ Have you selected two different themes for your dark/light schemes in user prefe
         @observes("selectedDarkColorSchemeId")
         onChangeDarkColorScheme() {
           switchToAuto();
-        }
+        },
       });
 
       api.createWidget("dark-light-selector", {
-        buildKey: attrs => "dark-light-selector",
+        buildKey: () => "dark-light-selector",
 
         click() {
           toggleDarkLight();
         },
 
-        html(attrs, state) {
+        html() {
           let style = lightTheme.media === "all" ? "light" : "dark";
 
-          let lightClass = style === "light" ? "scheme-toggle.hidden" : "scheme-toggle";
-          let darkClass = style === "dark" ? "scheme-toggle.hidden" : "scheme-toggle";
+          let lightClass =
+            style === "light" ? "scheme-toggle.hidden" : "scheme-toggle";
+          let darkClass =
+            style === "dark" ? "scheme-toggle.hidden" : "scheme-toggle";
 
-          return h("a.widget-link.dark-light-toggle",[
+          return h("a.widget-link.dark-light-toggle", [
             h(`div.${lightClass}`, [
               iconNode("sun", {
                 class: "scheme-icon",
               }),
-              h("p", {
-                title: I18n.t(themePrefix("toggle_description")) 
-              }, I18n.t(themePrefix("toggle_light_mode")))
+              h(
+                "p",
+                {
+                  title: I18n.t(themePrefix("toggle_description")),
+                },
+                I18n.t(themePrefix("toggle_light_mode"))
+              ),
             ]),
-            h(`div.${darkClass}`,[
+            h(`div.${darkClass}`, [
               iconNode("far-moon", {
                 class: "scheme-icon",
               }),
-              h("p", {
-                title: I18n.t(themePrefix("toggle_description")) 
-              }, I18n.t(themePrefix("toggle_dark_mode")))
-            ])
+              h(
+                "p",
+                {
+                  title: I18n.t(themePrefix("toggle_description")),
+                },
+                I18n.t(themePrefix("toggle_dark_mode"))
+              ),
+            ]),
           ]);
-        }
+        },
       });
 
       api.createWidget("auto-selector", {
-        buildKey: attrs => "auto-selector",
+        buildKey: () => "auto-selector",
 
         defaultState() {
           // checks to see what the autoScheme should be
           // I do this by checking if the users sytem setting is in dark mode
           // if the system setting is in dark mode, then the 'auto' scheme should be dark
           // and light if it is not
-          if (window.matchMedia &&
-              // this line checks if the user's system is currently in dark mode
-              window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          if (
+            window.matchMedia &&
+            // this line checks if the user's system is currently in dark mode
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          ) {
             return { autoScheme: "dark" };
           } else {
-            return { autoScheme: "light" }
+            return { autoScheme: "light" };
           }
-
         },
 
-        click() {          
+        click() {
           // if auto is currently selected, turn auto off
           // and set userSelectedScheme to the original color scheme
           if (cookie("userSelectedScheme") === "auto") {
@@ -158,39 +182,42 @@ Have you selected two different themes for your dark/light schemes in user prefe
             } else {
               switchToDark();
             }
-
           } else {
             switchToAuto();
           }
         },
 
         html() {
-          let icon = cookie("userSelectedScheme") === "auto" ?
-          "check-square" :
-          "far-square";
+          let icon =
+            cookie("userSelectedScheme") === "auto"
+              ? "check-square"
+              : "far-square";
 
-          return h("a.widget-link.auto-toggle",[
+          return h("a.widget-link.auto-toggle", [
             iconNode(icon, {
-              class: "scheme-icon"
+              class: "scheme-icon",
             }),
-            h("p", {title: I18n.t(themePrefix("auto_mode_description"))}, I18n.t(themePrefix("toggle_auto_mode")))
-            ]
-          );
-        }
+            h(
+              "p",
+              { title: I18n.t(themePrefix("auto_mode_description")) },
+              I18n.t(themePrefix("toggle_auto_mode"))
+            ),
+          ]);
+        },
       });
 
-      api.decorateWidget("menu-links:before", helper => {
+      api.decorateWidget("menu-links:before", (helper) => {
         if (helper.attrs.name === "footer-links") {
           return [
-            h("ul.color-scheme-toggle",[
+            h("ul.color-scheme-toggle", [
               h("li", helper.widget.attach("dark-light-selector")),
-              h("li", helper.widget.attach("auto-selector"))
+              h("li", helper.widget.attach("auto-selector")),
             ]),
             h(".clearfix"),
-            h("hr")
+            h("hr"),
           ];
         }
       });
     });
-  }
+  },
 };
