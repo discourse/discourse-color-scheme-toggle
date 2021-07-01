@@ -7,6 +7,20 @@ import { iconNode } from "discourse-common/lib/icon-library";
 import cookie from "discourse/lib/cookie";
 import { observes } from "discourse-common/utils/decorators";
 
+function activeScheme() {
+  let savedSchemeChoice = cookie("userSelectedScheme");
+
+  if (savedSchemeChoice === "dark") {
+    return "dark";
+  } else if (savedSchemeChoice === "light") {
+    return "light";
+  } else if (window?.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark";
+  } else {
+    return "light";
+  }
+}
+
 export default {
   name: "dark-light-toggle-hamburger-initializer",
 
@@ -62,7 +76,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
     };
 
     let toggleDarkLight = function () {
-      if (lightTheme.media === "all") {
+      if (activeScheme() === "light") {
         switchToDark();
       } else {
         switchToLight();
@@ -118,7 +132,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
 
         html() {
-          let style = lightTheme.media === "all" ? "light" : "dark";
+          let style = activeScheme();
 
           let lightClass =
             style === "light" ? "scheme-toggle.hidden" : "scheme-toggle";
@@ -162,11 +176,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
           // I do this by checking if the users sytem setting is in dark mode
           // if the system setting is in dark mode, then the 'auto' scheme should be dark
           // and light if it is not
-          if (
-            window.matchMedia &&
-            // this line checks if the user's system is currently in dark mode
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-          ) {
+          if (window?.matchMedia("(prefers-color-scheme: dark)").matches) {
             return { autoScheme: "dark" };
           } else {
             return { autoScheme: "light" };
