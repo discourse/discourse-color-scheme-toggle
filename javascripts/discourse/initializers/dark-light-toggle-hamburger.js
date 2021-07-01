@@ -43,36 +43,27 @@ Have you selected two different themes for your dark/light schemes in user prefe
       cookie("userSelectedScheme", "dark", {
         path: "/",
         expires: 9999,
-        secure: true,
       });
-      lightTheme.media = "none";
-      lightTheme.classList.remove("user-selected-theme");
       darkTheme.media = "all";
-      darkTheme.classList.add("user-selected-theme");
+      lightTheme.media = "none";
     };
 
     let switchToLight = function () {
       cookie("userSelectedScheme", "light", {
         path: "/",
         expires: 9999,
-        secure: true,
       });
-      darkTheme.media = "none";
-      darkTheme.classList.remove("user-selected-theme");
       lightTheme.media = "all";
-      lightTheme.classList.add("user-selected-theme");
+      darkTheme.media = "none";
     };
 
     let switchToAuto = function () {
       cookie("userSelectedScheme", "auto", {
         path: "/",
         expires: 9999,
-        secure: true,
       });
-      darkTheme.media = "(prefers-color-scheme: dark)";
-      darkTheme.classList.remove("user-selected-theme");
       lightTheme.media = "all";
-      lightTheme.classList.remove("user-selected-theme");
+      darkTheme.media = "(prefers-color-scheme: dark)";
     };
 
     let toggleDarkLight = function () {
@@ -91,22 +82,24 @@ Have you selected two different themes for your dark/light schemes in user prefe
       }
 
       if (savedSchemeChoice === "light") {
-        darkTheme.media = "none";
-        darkTheme.classList.remove("user-selected-theme");
-        lightTheme.media = "all";
-        lightTheme.classList.add("user-selected-theme");
+        switchToLight();
       } else if (savedSchemeChoice === "dark") {
-        lightTheme.media = "none";
-        lightTheme.classList.remove("user-selected-theme");
-        darkTheme.media = "all";
-        darkTheme.classList.add("user-selected-theme");
+        switchToDark();
       } else if (savedSchemeChoice === "auto") {
-        lightTheme.media = "all";
-        lightTheme.classList.remove("user-selected-theme");
-        darkTheme.media = "(prefers-color-scheme: dark)";
-        darkTheme.classList.remove("user-selected-theme");
+        switchToAuto();
       }
     };
+
+    function createToggle(iconName, labelName) {
+      let title = I18n.t(themePrefix("toggle_description"));
+
+      let toggle = h("div.scheme-toggle", { title }, [
+        iconNode(iconName, { class: "scheme-icon" }),
+        h("span", I18n.t(themePrefix(labelName))),
+      ]);
+
+      return h("a.widget-link.dark-light-toggle", [toggle]);
+    }
 
     loadDarkOrLight();
 
@@ -118,6 +111,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
         onChangeColorScheme() {
           switchToAuto();
         },
+
         @observes("selectedDarkColorSchemeId")
         onChangeDarkColorScheme() {
           switchToAuto();
@@ -132,39 +126,11 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
 
         html() {
-          let style = activeScheme();
-
-          let lightClass =
-            style === "light" ? "scheme-toggle.hidden" : "scheme-toggle";
-          let darkClass =
-            style === "dark" ? "scheme-toggle.hidden" : "scheme-toggle";
-
-          return h("a.widget-link.dark-light-toggle", [
-            h(`div.${lightClass}`, [
-              iconNode("sun", {
-                class: "scheme-icon",
-              }),
-              h(
-                "p",
-                {
-                  title: I18n.t(themePrefix("toggle_description")),
-                },
-                I18n.t(themePrefix("toggle_light_mode"))
-              ),
-            ]),
-            h(`div.${darkClass}`, [
-              iconNode("far-moon", {
-                class: "scheme-icon",
-              }),
-              h(
-                "p",
-                {
-                  title: I18n.t(themePrefix("toggle_description")),
-                },
-                I18n.t(themePrefix("toggle_dark_mode"))
-              ),
-            ]),
-          ]);
+          if (activeScheme() === "light") {
+            return createToggle("far-moon", "toggle_dark_mode");
+          } else {
+            return createToggle("sun", "toggle_light_mode");
+          }
         },
       });
 
@@ -223,7 +189,6 @@ Have you selected two different themes for your dark/light schemes in user prefe
               h("li", helper.widget.attach("dark-light-selector")),
               h("li", helper.widget.attach("auto-selector")),
             ]),
-            h(".clearfix"),
             h("hr"),
           ];
         }

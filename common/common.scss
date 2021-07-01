@@ -18,7 +18,7 @@
 }
 
 .widget-link.auto-toggle {
-  display: flex !important;
+  display: flex;
   flex-direction: row;
   align-items: center;
 
@@ -29,8 +29,4 @@
 
 .scheme-icon {
   margin-right: 0.25em;
-}
-
-.scheme-toggle.hidden {
-  display: none !important;
 }
