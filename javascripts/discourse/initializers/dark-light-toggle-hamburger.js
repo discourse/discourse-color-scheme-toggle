@@ -21,6 +21,27 @@ function activeScheme() {
   }
 }
 
+function updateThemeColor(frames = 0) {
+  // The number is arbitrary (~1s) and in most cases the actual count ends up
+  // being either 0 or 3 (Safari)
+  if (frames >= 60) {
+    // The style is unlikely to load at this point so bail
+    return;
+  }
+
+  let color = getComputedStyle(document.documentElement).getPropertyValue(
+    "--header_background"
+  );
+
+  if (color) {
+    document
+      .querySelector("meta[name=theme-color]")
+      .setAttribute("content", color);
+  } else {
+    requestAnimationFrame(() => updateThemeColor(frames + 1));
+  }
+}
+
 export default {
   name: "dark-light-toggle-hamburger-initializer",
 
@@ -72,9 +93,12 @@ Have you selected two different themes for your dark/light schemes in user prefe
       } else {
         switchToLight();
       }
+
+      updateThemeColor();
     };
 
     let loadDarkOrLight = function () {
+      updateThemeColor();
       let savedSchemeChoice = cookie("userSelectedScheme");
 
       if (!savedSchemeChoice) {
@@ -102,6 +126,10 @@ Have you selected two different themes for your dark/light schemes in user prefe
     }
 
     loadDarkOrLight();
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", updateThemeColor);
 
     withPluginApi("0.8", (api) => {
       // this will reset the scheme choice to 'auto' whenever a user
