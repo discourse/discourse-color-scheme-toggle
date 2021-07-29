@@ -6,6 +6,7 @@ import { h } from "virtual-dom";
 import { iconNode } from "discourse-common/lib/icon-library";
 import cookie from "discourse/lib/cookie";
 import { observes } from "discourse-common/utils/decorators";
+import Session from "discourse/models/session";
 
 function activeScheme() {
   let savedSchemeChoice = cookie("userSelectedScheme");
@@ -67,6 +68,12 @@ Have you selected two different themes for your dark/light schemes in user prefe
       });
       darkTheme.media = "all";
       lightTheme.media = "none";
+
+      Session.currentProp(
+        "defaultColorSchemeIsDark",
+        true
+      );
+      
     };
 
     let switchToLight = function () {
@@ -76,6 +83,12 @@ Have you selected two different themes for your dark/light schemes in user prefe
       });
       lightTheme.media = "all";
       darkTheme.media = "none";
+
+      Session.currentProp(
+        "defaultColorSchemeIsDark",
+        false
+      );
+
     };
 
     let switchToAuto = function () {
@@ -85,6 +98,18 @@ Have you selected two different themes for your dark/light schemes in user prefe
       });
       lightTheme.media = "all";
       darkTheme.media = "(prefers-color-scheme: dark)";
+
+      if (window?.matchMedia("(prefers-color-scheme: dark)").matches) {
+        Session.currentProp(
+          "defaultColorSchemeIsDark",
+          true
+        );
+      } else {
+        Session.currentProp(
+          "defaultColorSchemeIsDark",
+          false
+        );
+      }
     };
 
     let toggleDarkLight = function () {
