@@ -27,6 +27,108 @@
   }
 }
 
-.scheme-icon {
-  margin-right: 0.25em;
+// theme toggle button
+
+/* The switch - the box around the slider */
+#dark-light-toggle {
+  display: flex;
+  width: auto;
+
+  &:hover {
+    background-color: transparent;
+
+    .d-icon {
+      color: var(--primary);
+    }
+
+    .switch.dark {
+      span.toggle-icon .d-icon-sun {
+        color: transparent;
+      }
+    }
+
+    .switch.light {
+      .d-icon {
+        color: #ffae00;
+      }
+
+      span.toggle-icon .d-icon-far-moon {
+        color: transparent;
+      }
+    }
+  }
+}
+
+.switch {
+  position: relative;
+  width: 70px;
+  height: 35px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  border-radius: 35px;
+  border: 1px solid var(--primary-low-mid);
+  justify-content: space-between;
+}
+
+.switch span.toggle-icon {
+  display: flex;
+  align-items: center;
+  margin: 0 0.5em;
+  .d-icon {
+    width: 20px;
+    color: var(--primary);
+    font-size: 20px;
+    align-self: center;
+  }
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  height: 18px;
+  width: 18px;
+  top: calc(50% - 12px);
+  left: 4px;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 3px solid #ffae00;
+  -webkit-transition: .4s;
+  transition: .4s;
+  background-color: #F4E99B;
+}
+
+.switch.dark {
+  background-color: var(--secondary-very-high);
+
+  .slider {
+    border-color: var(--primary);
+    background-color: var(--secondary-very-high);
+  }
+
+  span.toggle-icon .d-icon-sun {
+    color: transparent
+  }
+}
+
+.switch.light {
+  background-color: var(--header_background);
+  span.toggle-icon .d-icon {
+    color: #ffae00;
+  }
+  span.toggle-icon .d-icon-far-moon {
+    color: transparent;
+  }
+}
+
+span:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+.switch.dark span.slider {
+  -webkit-transform: translateX(36px);
+  -ms-transform: translateX(36px);
+  transform: translateX(36px);
 }
