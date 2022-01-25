@@ -159,6 +159,51 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
       });
 
+      api.createWidget("dark-light-toggle", {
+        tagName: "li.dark-light-toggle.icon",
+
+        buildKey: () => "dark-light-toggle",
+
+        buildId: () => "dark-light-toggle",
+
+        click() {
+          toggleDarkLight();
+          this.scheduleRerender();
+        },
+
+        selectedScheme(scheme) {
+          if (activeScheme() === scheme) {
+            return ".selected";
+          }
+
+          return "";
+        },
+
+        html() {
+          return h(`label.switch.${activeScheme()}`, [
+            h(`span.slider.round`, ""),
+            h(
+              `span.toggle-icon.round.dark${this.selectedScheme("light")}`,
+              iconNode("sun", {
+                class: "scheme-icon",
+              })
+            ),
+            h(
+              `span.toggle-icon.round.light${this.selectedScheme("dark")}`,
+              iconNode("far-moon", {
+                class: "scheme-icon",
+              })
+            ),
+          ]);
+        },
+      });
+
+      const currentUser = api.getCurrentUser();
+
+      if (settings.add_color_scheme_toggle_to_header) {
+        api.addToHeaderIcons("dark-light-toggle");
+      }
+
       api.createWidget("dark-light-selector", {
         buildKey: () => "dark-light-selector",
 
@@ -225,13 +270,16 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
       api.decorateWidget("menu-links:before", (helper) => {
         if (helper.attrs.name === "footer-links") {
-          return [
-            h("ul.color-scheme-toggle", [
-              h("li", helper.widget.attach("dark-light-selector")),
-              h("li", helper.widget.attach("auto-selector")),
-            ]),
-            h("hr"),
-          ];
+          if (!settings.add_color_scheme_toggle_to_header) {
+            return [
+              h("ul.color-scheme-toggle", [
+                h("li", helper.widget.attach("dark-light-selector")),
+                h("li", helper.widget.attach("auto-selector")),
+              ]),
+              h("hr")
+            ];
+          }
+          return "";
         }
       });
     });
