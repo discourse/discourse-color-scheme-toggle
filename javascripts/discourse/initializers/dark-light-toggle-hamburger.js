@@ -183,14 +183,14 @@ Have you selected two different themes for your dark/light schemes in user prefe
           return h(`label.switch.${activeScheme()}`, [
             h(`span.slider.round`, ""),
             h(
-              `span.toggle-icon.round.dark${this.selectedScheme("dark")}`,
-              iconNode("far-moon", {
+              `span.toggle-icon.round.dark${this.selectedScheme("light")}`,
+              iconNode("sun", {
                 class: "scheme-icon",
               })
             ),
             h(
-              `span.toggle-icon.round.light${this.selectedScheme("light")}`,
-              iconNode("sun", {
+              `span.toggle-icon.round.light${this.selectedScheme("dark")}`,
+              iconNode("far-moon", {
                 class: "scheme-icon",
               })
             ),
@@ -270,14 +270,15 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
       api.decorateWidget("menu-links:before", (helper) => {
         if (helper.attrs.name === "footer-links") {
-          const widgets = [h("li", helper.widget.attach("auto-selector"))];
+          const widgets = [];
 
           if (!settings.add_color_scheme_toggle_to_header) {
             widgets.unshift(
               h("li", helper.widget.attach("dark-light-selector"))
             );
+            return [h("ul.color-scheme-toggle", widgets), h("hr")];
           }
-          return [h("ul.color-scheme-toggle", widgets), h("hr")];
+          return "";
         }
       });
     });
