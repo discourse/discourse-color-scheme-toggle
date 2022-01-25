@@ -270,13 +270,14 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
       api.decorateWidget("menu-links:before", (helper) => {
         if (helper.attrs.name === "footer-links") {
-          const widgets = [];
-
           if (!settings.add_color_scheme_toggle_to_header) {
-            widgets.unshift(
-              h("li", helper.widget.attach("dark-light-selector"))
-            );
-            return [h("ul.color-scheme-toggle", widgets), h("hr")];
+            return [
+              h("ul.color-scheme-toggle", [
+                h("li", helper.widget.attach("dark-light-selector")),
+                h("li", helper.widget.attach("auto-selector")),
+              ]),
+              h("hr")
+            ];
           }
           return "";
         }
