@@ -198,8 +198,6 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
       });
 
-      const currentUser = api.getCurrentUser();
-
       if (settings.add_color_scheme_toggle_to_header) {
         api.addToHeaderIcons("dark-light-toggle");
       }
