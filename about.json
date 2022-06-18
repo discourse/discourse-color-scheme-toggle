@@ -1,6 +1,6 @@
 {
   "name": "Dark-Light Toggle",
+  "component": true,
   "about_url": null,
-  "license_url": null,
-  "component": true
+  "license_url": null
 }
