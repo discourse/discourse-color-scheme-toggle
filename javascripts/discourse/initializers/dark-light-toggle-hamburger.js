@@ -274,7 +274,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
                 h("li", helper.widget.attach("dark-light-selector")),
                 h("li", helper.widget.attach("auto-selector")),
               ]),
-              h("hr")
+              h("hr"),
             ];
           }
           return "";
