@@ -1,10 +1,10 @@
 {
-  "name": "iscourse-color-scheme-toggle",
+  "name": "discourse-color-scheme-toggle",
   "version": "1.0.0",
   "repository": "https://github.com/discourse/discourse-color-scheme-toggle",
   "author": "Discourse",
   "license": "MIT",
   "devDependencies": {
-    "eslint-config-discourse": "^1.1.8"
+    "eslint-config-discourse": "^3.2.0"
   }
 }
