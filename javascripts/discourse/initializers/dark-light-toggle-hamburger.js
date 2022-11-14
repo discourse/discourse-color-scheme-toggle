@@ -70,6 +70,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
       lightTheme.media = "none";
 
       Session.currentProp("defaultColorSchemeIsDark", true);
+      Session.currentProp("darkModeAvailable", true)
     };
 
     let switchToLight = function () {
@@ -81,6 +82,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
       darkTheme.media = "none";
 
       Session.currentProp("defaultColorSchemeIsDark", false);
+      Session.currentProp("darkModeAvailable", false)
     };
 
     let switchToAuto = function () {
@@ -93,8 +95,10 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
       if (window?.matchMedia("(prefers-color-scheme: dark)").matches) {
         Session.currentProp("defaultColorSchemeIsDark", true);
+        Session.currentProp("darkModeAvailable", true)
       } else {
         Session.currentProp("defaultColorSchemeIsDark", false);
+        Session.currentProp("darkModeAvailable", false)
       }
     };
 
@@ -198,7 +202,9 @@ Have you selected two different themes for your dark/light schemes in user prefe
         },
       });
 
-      if (settings.add_color_scheme_toggle_to_header) {
+      // with new sidebar rolling out, this will be the main option of showing
+      // allow those who dont use sidebar to remove from header
+      if (!settings.remove_color_scheme_toggle_from_header) {
         api.addToHeaderIcons("dark-light-toggle");
       }
 

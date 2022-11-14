@@ -2,7 +2,7 @@ svg_icons:
   default: "moon|sun"
   type: "list"
   list_type: "compact"
-add_color_scheme_toggle_to_header:
+remove_color_scheme_toggle_from_header:
   default: false
   type: bool
-  description: "Add color scheme toggle button to site header"
+  description: "Do not show color scheme toggle button in site header"
