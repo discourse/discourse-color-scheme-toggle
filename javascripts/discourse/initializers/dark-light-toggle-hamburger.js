@@ -70,7 +70,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
       lightTheme.media = "none";
 
       Session.currentProp("defaultColorSchemeIsDark", true);
-      Session.currentProp("darkModeAvailable", true)
+      Session.currentProp("darkModeAvailable", true);
     };
 
     let switchToLight = function () {
@@ -82,7 +82,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
       darkTheme.media = "none";
 
       Session.currentProp("defaultColorSchemeIsDark", false);
-      Session.currentProp("darkModeAvailable", false)
+      Session.currentProp("darkModeAvailable", false);
     };
 
     let switchToAuto = function () {
@@ -95,10 +95,10 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
       if (window?.matchMedia("(prefers-color-scheme: dark)").matches) {
         Session.currentProp("defaultColorSchemeIsDark", true);
-        Session.currentProp("darkModeAvailable", true)
+        Session.currentProp("darkModeAvailable", true);
       } else {
         Session.currentProp("defaultColorSchemeIsDark", false);
-        Session.currentProp("darkModeAvailable", false)
+        Session.currentProp("darkModeAvailable", false);
       }
     };
 
