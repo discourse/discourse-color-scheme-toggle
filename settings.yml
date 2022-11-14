@@ -3,6 +3,6 @@ svg_icons:
   type: "list"
   list_type: "compact"
 remove_color_scheme_toggle_from_header:
-  default: false
+  default: true
   type: bool
   description: "Do not show color scheme toggle button in site header"
