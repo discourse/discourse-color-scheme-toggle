@@ -213,6 +213,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
 
         click() {
           toggleDarkLight();
+          this.scheduleRerender();
         },
 
         html() {
@@ -251,6 +252,7 @@ Have you selected two different themes for your dark/light schemes in user prefe
           } else {
             switchToAuto();
           }
+          this.scheduleRerender();
         },
 
         html() {
