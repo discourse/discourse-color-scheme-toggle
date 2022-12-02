@@ -3,8 +3,8 @@ import { action, computed } from "@ember/object";
 import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
 import {
-  colorSchemeOverride,
   COLOR_SCHEME_OVERRIDE_KEY,
+  colorSchemeOverride,
 } from "../lib/color-scheme-override";
 
 export default class ColorSchemeToggler extends Component {

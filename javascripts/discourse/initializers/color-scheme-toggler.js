@@ -1,7 +1,7 @@
 import Session from "discourse/models/session";
 import {
-  colorSchemeOverride,
   COLOR_SCHEME_OVERRIDE_KEY,
+  colorSchemeOverride,
 } from "../lib/color-scheme-override";
 import { schedule } from "@ember/runloop";
 import { withPluginApi } from "discourse/lib/plugin-api";
