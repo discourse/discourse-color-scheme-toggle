@@ -1,4 +1,8 @@
 .header-toggle-button {
+  // this is not ideal, we usually don't want to mess
+  // with button padding...
+  // but the problem here is that the other header elements aren't buttons
+  // they are anchors...
   .btn {
     padding: 0;
   }
