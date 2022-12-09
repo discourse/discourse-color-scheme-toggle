@@ -10,6 +10,14 @@ export default {
   name: "color-scheme-toggler",
 
   initialize(container) {
+    if (!Session.currentProp("darkModeAvailable")) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "No dark color scheme available, the discourse-color-scheme-toggle component has no effect."
+      );
+      return;
+    }
+
     const keyValueStore = container.lookup("service:key-value-store");
     const storedOverride = keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
 
