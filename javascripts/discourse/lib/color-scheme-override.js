@@ -65,7 +65,9 @@ export function colorSchemeOverride(type) {
       if (categoryLogosDarkSrc) {
         for (let index = 0; index < categoryLogosDarkSrc.length; index++) {
           let logo = categoryLogosDarkSrc[index];
-          if (logo?.origMedia) logo.media = logo.origMedia;
+          if (logo?.origMedia) { 
+            logo.media = logo.origMedia;
+          }
         }
       }
       break;
