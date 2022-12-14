@@ -9,6 +9,9 @@ export function colorSchemeOverride(type) {
   }
 
   const logoDarkSrc = document.querySelector(".title picture source");
+  const categoryLogosDarkSrc = document.querySelectorAll(
+    ".category-logo picture source"
+  );
 
   switch (type) {
     case "dark":
@@ -20,6 +23,14 @@ export function colorSchemeOverride(type) {
         logoDarkSrc.origMedia = logoDarkSrc.media;
         logoDarkSrc.media = "all";
       }
+
+      if (categoryLogosDarkSrc) {
+        for (let index = 0; index < categoryLogosDarkSrc.length; index++) {
+          let logo = categoryLogosDarkSrc[index];
+          logo.origMedia = logo.media;
+          logo.media = "all";
+        }
+      }
       break;
     case "light":
       lightScheme.origMedia = lightScheme.media;
@@ -29,6 +40,14 @@ export function colorSchemeOverride(type) {
       if (logoDarkSrc) {
         logoDarkSrc.origMedia = logoDarkSrc.media;
         logoDarkSrc.media = "none";
+      }
+
+      if (categoryLogosDarkSrc) {
+        for (let index = 0; index < categoryLogosDarkSrc.length; index++) {
+          let logo = categoryLogosDarkSrc[index];
+          logo.origMedia = logo.media;
+          logo.media = "none";
+        }
       }
       break;
     default:
@@ -42,6 +61,12 @@ export function colorSchemeOverride(type) {
       }
       if (logoDarkSrc?.origMedia) {
         logoDarkSrc.media = logoDarkSrc.origMedia;
+      }
+      if (categoryLogosDarkSrc) {
+        for (let index = 0; index < categoryLogosDarkSrc.length; index++) {
+          let logo = categoryLogosDarkSrc[index];
+          if (logo?.origMedia) logo.media = logo.origMedia;
+        }
       }
       break;
   }
