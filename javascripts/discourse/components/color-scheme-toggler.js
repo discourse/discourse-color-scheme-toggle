@@ -1,4 +1,5 @@
 import Component from "@glimmer/component";
+import Session from "discourse/models/session";
 import { action, computed } from "@ember/object";
 import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
@@ -51,7 +52,12 @@ export default class ColorSchemeToggler extends Component {
         break;
     }
 
-    this.storedOverride = this.keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
+    this.storedOverride =
+      this.keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY) || null;
+
+    // currently only used to flip category logos back/forth
+    Session.currentProp("colorSchemeOverride", this.storedOverride);
+
     colorSchemeOverride(this.storedOverride);
   }
 }
