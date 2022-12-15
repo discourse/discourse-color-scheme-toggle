@@ -20,6 +20,9 @@ export default {
 
     const keyValueStore = container.lookup("service:key-value-store");
     const storedOverride = keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
+    if (storedOverride) {
+      Session.currentProp("colorSchemeOverride", storedOverride);
+    }
 
     if (Session.currentProp("darkModeAvailable") && storedOverride) {
       schedule("afterRender", () => {
@@ -33,6 +36,7 @@ export default {
       .addEventListener("change", () => {
         // reset when switching OS dark mode
         keyValueStore.removeItem(COLOR_SCHEME_OVERRIDE_KEY);
+        Session.currentProp("colorSchemeOverride", null);
         colorSchemeOverride();
       });
 
