@@ -24,13 +24,6 @@ export default {
       Session.currentProp("colorSchemeOverride", storedOverride);
     }
 
-    if (Session.currentProp("darkModeAvailable") && storedOverride) {
-      schedule("afterRender", () => {
-        // delay needed for logo override
-        colorSchemeOverride(storedOverride);
-      });
-    }
-
     window
       .matchMedia("(prefers-color-scheme: dark)")
       .addEventListener("change", () => {
@@ -43,6 +36,14 @@ export default {
     if (settings.add_color_scheme_toggle_to_header) {
       withPluginApi("0.8", (api) => {
         api.addToHeaderIcons("header-toggle-button");
+        api.onPageChange(() => {
+          if (Session.currentProp("darkModeAvailable") && storedOverride) {
+            schedule("afterRender", () => {
+              // delay needed for logo override
+              colorSchemeOverride(storedOverride);
+            });
+          }
+        });
       });
     }
   },
