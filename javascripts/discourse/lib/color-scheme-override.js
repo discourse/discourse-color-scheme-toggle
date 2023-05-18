@@ -2,7 +2,9 @@ export const COLOR_SCHEME_OVERRIDE_KEY = "color_scheme_override";
 
 export function colorSchemeOverride(type) {
   const lightScheme = document.querySelector("link.light-scheme");
-  const darkScheme = document.querySelector("link.dark-scheme");
+  const darkScheme =
+    document.querySelector("link.dark-scheme") ||
+    document.querySelector("link#cs-preview-dark");
 
   if (!lightScheme && !darkScheme) {
     return;
