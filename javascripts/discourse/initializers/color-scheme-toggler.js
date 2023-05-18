@@ -5,17 +5,28 @@ import {
 } from "../lib/color-scheme-override";
 import { schedule } from "@ember/runloop";
 import { withPluginApi } from "discourse/lib/plugin-api";
+import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
+import { currentThemeId } from "discourse/lib/theme-selector";
 
 export default {
   name: "color-scheme-toggler",
 
   initialize(container) {
     if (!Session.currentProp("darkModeAvailable")) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        "No dark color scheme available, the discourse-color-scheme-toggle component has no effect."
-      );
-      return;
+      const siteSettings = container.lookup("site-settings:main");
+      if (siteSettings.default_dark_mode_color_scheme_id > 0) {
+        loadColorSchemeStylesheet(
+          siteSettings.default_dark_mode_color_scheme_id,
+          currentThemeId(),
+          true
+        );
+      } else {
+        // eslint-disable-next-line no-console
+        console.warn(
+          "No dark color scheme available, the discourse-color-scheme-toggle component has no effect."
+        );
+        return;
+      }
     }
 
     const keyValueStore = container.lookup("service:key-value-store");
