@@ -12,14 +12,26 @@ export default {
   name: "color-scheme-toggler",
 
   initialize(container) {
+    const keyValueStore = container.lookup("service:key-value-store");
+    const storedOverride = keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
+
     if (!Session.currentProp("darkModeAvailable")) {
       const siteSettings = container.lookup("site-settings:main");
+
       if (siteSettings.default_dark_mode_color_scheme_id > 0) {
         loadColorSchemeStylesheet(
           siteSettings.default_dark_mode_color_scheme_id,
           currentThemeId(),
           true
-        );
+        ).then(() => {
+          if (storedOverride) {
+            colorSchemeOverride(storedOverride);
+          } else {
+            // ensures that this extra stylesheet isn't auto-used when OS is in dark mode
+            document.querySelector("link#cs-preview-dark").media =
+              "(prefers-color-scheme: none)";
+          }
+        });
       } else {
         // eslint-disable-next-line no-console
         console.warn(
@@ -29,8 +41,6 @@ export default {
       }
     }
 
-    const keyValueStore = container.lookup("service:key-value-store");
-    const storedOverride = keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
     if (storedOverride) {
       Session.currentProp("colorSchemeOverride", storedOverride);
     }
