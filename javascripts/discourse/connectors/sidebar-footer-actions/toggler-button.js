@@ -4,10 +4,10 @@ export default {
   setupComponent(_args, component) {
     component.showInSidebar = false;
 
-    if (!Session.currentProp("darkModeAvailable")) {
-      if (component.siteSettings.default_dark_mode_color_scheme_id > 0) {
-        component.showInSidebar = true;
-      }
+    if (
+      !Session.currentProp("darkModeAvailable") &&
+      component.siteSettings.default_dark_mode_color_scheme_id < 0
+    ) {
       return;
     }
 
