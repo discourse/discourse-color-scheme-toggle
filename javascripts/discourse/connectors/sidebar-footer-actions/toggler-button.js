@@ -5,6 +5,9 @@ export default {
     component.showInSidebar = false;
 
     if (!Session.currentProp("darkModeAvailable")) {
+      if (component.siteSettings.default_dark_mode_color_scheme_id > 0) {
+        component.showInSidebar = true;
+      }
       return;
     }
 
