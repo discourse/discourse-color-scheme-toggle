@@ -3,7 +3,7 @@ import {
   COLOR_SCHEME_OVERRIDE_KEY,
   colorSchemeOverride,
 } from "../lib/color-scheme-override";
-import { schedule } from "@ember/runloop";
+import { later, schedule } from "@ember/runloop";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
 import { currentThemeId } from "discourse/lib/theme-selector";
@@ -47,8 +47,14 @@ export default {
 
     if (Session.currentProp("darkModeAvailable") && storedOverride) {
       schedule("afterRender", () => {
-        // delay needed for logo override
         colorSchemeOverride(storedOverride);
+
+        const logoDarkSrc = document.querySelector(".title picture source");
+        if (!logoDarkSrc) {
+          // in some cases the logo widget is not yet rendered
+          // so we try again after a short delay
+          later(() => colorSchemeOverride(storedOverride), 500);
+        }
       });
     }
 
