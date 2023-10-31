@@ -47,13 +47,13 @@ export default {
 
     if (Session.currentProp("darkModeAvailable") && storedOverride) {
       schedule("afterRender", () => {
-        colorSchemeOverride(storedOverride);
-
         const logoDarkSrc = document.querySelector(".title picture source");
+        // in some cases the logo widget is not yet rendered
+        // so we schedule the calculation after a short delay
         if (!logoDarkSrc) {
-          // in some cases the logo widget is not yet rendered
-          // so we try again after a short delay
           later(() => colorSchemeOverride(storedOverride), 500);
+        } else {
+          colorSchemeOverride(storedOverride);
         }
       });
     }
