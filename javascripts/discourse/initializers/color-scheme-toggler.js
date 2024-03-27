@@ -1,12 +1,12 @@
+import { later, schedule } from "@ember/runloop";
+import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
+import { withPluginApi } from "discourse/lib/plugin-api";
+import { currentThemeId } from "discourse/lib/theme-selector";
 import Session from "discourse/models/session";
 import {
   COLOR_SCHEME_OVERRIDE_KEY,
   colorSchemeOverride,
 } from "../lib/color-scheme-override";
-import { later, schedule } from "@ember/runloop";
-import { withPluginApi } from "discourse/lib/plugin-api";
-import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
-import { currentThemeId } from "discourse/lib/theme-selector";
 
 export default {
   name: "color-scheme-toggler",
@@ -16,7 +16,7 @@ export default {
     const storedOverride = keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
 
     if (!Session.currentProp("darkModeAvailable")) {
-      const siteSettings = container.lookup("site-settings:main");
+      const siteSettings = container.lookup("service:site-settings");
 
       if (siteSettings.default_dark_mode_color_scheme_id > 0) {
         loadColorSchemeStylesheet(

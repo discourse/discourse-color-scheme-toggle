@@ -1,7 +1,7 @@
-import { acceptance, visible } from "discourse/tests/helpers/qunit-helpers";
 import { visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import Session from "discourse/models/session";
+import { acceptance, visible } from "discourse/tests/helpers/qunit-helpers";
 
 acceptance("Color Scheme Toggle - header icon", function (needs) {
   needs.hooks.beforeEach(() => {
