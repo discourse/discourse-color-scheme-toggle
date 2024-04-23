@@ -69,7 +69,7 @@ export default {
 
     if (settings.add_color_scheme_toggle_to_header) {
       withPluginApi("0.8", (api) => {
-        api.addToHeaderIcons("header-toggle-button");
+        api.headerIcons.add("header-toggle-button");
       });
     }
   },
