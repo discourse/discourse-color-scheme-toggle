@@ -3,6 +3,7 @@ import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { currentThemeId } from "discourse/lib/theme-selector";
 import Session from "discourse/models/session";
+import ColorSchemeToggler from "../components/color-scheme-toggler";
 import {
   COLOR_SCHEME_OVERRIDE_KEY,
   colorSchemeOverride,
@@ -68,8 +69,18 @@ export default {
       });
 
     if (settings.add_color_scheme_toggle_to_header) {
-      withPluginApi("0.8", (api) => {
-        api.addToHeaderIcons("header-toggle-button");
+      withPluginApi("1.28.0", (api) => {
+        api.headerIcons.add(
+          "header-toggle-button",
+          <template>
+            <li class="header-toggle-button header-dropdown-toggle">
+              <span class="header-color-scheme-toggle icon">
+                <ColorSchemeToggler />
+              </span>
+            </li>
+          </template>,
+          { before: "search" }
+        );
       });
     }
   },
