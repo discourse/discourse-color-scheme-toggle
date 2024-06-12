@@ -1,6 +1,6 @@
 {
   "name": "Dark-Light Toggle",
   "component": true,
-  "about_url": null,
-  "license_url": null
+  "about_url": "https://meta.discourse.org/t/dark-light-mode-toggle/215585",
+  "license_url": "https://github.com/discourse/discourse-color-scheme-toggle/blob/main/LICENSE"
 }
