@@ -14,6 +14,7 @@ import {
 class TogglerInit {
   @service keyValueStore;
   @service session;
+  @service siteSettings;
 
   constructor(owner) {
     setOwner(this, owner);
@@ -23,9 +24,7 @@ class TogglerInit {
     );
 
     if (!this.session.darkModeAvailable) {
-      const siteSettings = owner.lookup("service:site-settings");
-
-      if (siteSettings.default_dark_mode_color_scheme_id <= 0) {
+      if (this.siteSettings.default_dark_mode_color_scheme_id <= 0) {
         // eslint-disable-next-line no-console
         console.warn(
           "No dark color scheme available, the discourse-color-scheme-toggle component has no effect."
@@ -34,7 +33,7 @@ class TogglerInit {
       }
 
       loadColorSchemeStylesheet(
-        siteSettings.default_dark_mode_color_scheme_id,
+        this.siteSettings.default_dark_mode_color_scheme_id,
         currentThemeId(),
         true
       ).then(() => {
