@@ -1,58 +1,70 @@
+import { setOwner } from "@ember/owner";
 import { later, schedule } from "@ember/runloop";
+import { service } from "@ember/service";
 import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { currentThemeId } from "discourse/lib/theme-selector";
-import Session from "discourse/models/session";
+import { bind } from "discourse-common/utils/decorators";
 import ColorSchemeToggler from "../components/color-scheme-toggler";
 import {
   COLOR_SCHEME_OVERRIDE_KEY,
   colorSchemeOverride,
 } from "../lib/color-scheme-override";
 
-export default {
-  name: "color-scheme-toggler",
+class TogglerInit {
+  @service keyValueStore;
+  @service session;
 
-  initialize(container) {
-    const keyValueStore = container.lookup("service:key-value-store");
-    const storedOverride = keyValueStore.getItem(COLOR_SCHEME_OVERRIDE_KEY);
+  constructor(owner) {
+    setOwner(this, owner);
 
-    if (!Session.currentProp("darkModeAvailable")) {
-      const siteSettings = container.lookup("service:site-settings");
+    const storedOverride = this.keyValueStore.getItem(
+      COLOR_SCHEME_OVERRIDE_KEY
+    );
 
-      if (siteSettings.default_dark_mode_color_scheme_id > 0) {
-        loadColorSchemeStylesheet(
-          siteSettings.default_dark_mode_color_scheme_id,
-          currentThemeId(),
-          true
-        ).then(() => {
-          if (storedOverride) {
-            colorSchemeOverride(storedOverride);
-          } else {
-            // ensures that this extra stylesheet isn't auto-used when OS is in dark mode
-            document.querySelector("link#cs-preview-dark").media =
-              "(prefers-color-scheme: none)";
-          }
-        });
-      } else {
+    if (!this.session.darkModeAvailable) {
+      const siteSettings = owner.lookup("service:site-settings");
+
+      if (siteSettings.default_dark_mode_color_scheme_id <= 0) {
         // eslint-disable-next-line no-console
         console.warn(
           "No dark color scheme available, the discourse-color-scheme-toggle component has no effect."
         );
         return;
       }
+
+      loadColorSchemeStylesheet(
+        siteSettings.default_dark_mode_color_scheme_id,
+        currentThemeId(),
+        true
+      ).then(() => {
+        if (storedOverride) {
+          colorSchemeOverride(storedOverride);
+        } else {
+          // ensures that this extra stylesheet isn't auto-used when OS is in dark mode
+          document.querySelector("link#cs-preview-dark").media =
+            "(prefers-color-scheme: none)";
+        }
+      });
     }
 
     if (storedOverride) {
-      Session.currentProp("colorSchemeOverride", storedOverride);
+      this.session.set("colorSchemeOverride", storedOverride);
     }
 
-    if (Session.currentProp("darkModeAvailable") && storedOverride) {
+    if (this.session.darkModeAvailable && storedOverride) {
       schedule("afterRender", () => {
         const logoDarkSrc = document.querySelector(".title picture source");
         // in some cases the logo widget is not yet rendered
         // so we schedule the calculation after a short delay
         if (!logoDarkSrc) {
-          later(() => colorSchemeOverride(storedOverride), 500);
+          later(() => {
+            if (owner.isDestroying || owner.isDestroyed) {
+              return;
+            }
+
+            colorSchemeOverride(storedOverride);
+          }, 500);
         } else {
           colorSchemeOverride(storedOverride);
         }
@@ -61,12 +73,7 @@ export default {
 
     window
       .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", () => {
-        // reset when switching OS dark mode
-        keyValueStore.removeItem(COLOR_SCHEME_OVERRIDE_KEY);
-        Session.currentProp("colorSchemeOverride", null);
-        colorSchemeOverride();
-      });
+      .addEventListener("change", this.onColorChange);
 
     if (settings.add_color_scheme_toggle_to_header) {
       withPluginApi("1.28.0", (api) => {
@@ -83,5 +90,32 @@ export default {
         );
       });
     }
+  }
+
+  @bind
+  onColorChange() {
+    // reset when switching OS dark mode
+    this.keyValueStore.removeItem(COLOR_SCHEME_OVERRIDE_KEY);
+    this.session.set("colorSchemeOverride", null);
+    colorSchemeOverride();
+  }
+
+  teardown() {
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .removeEventListener("change", this.onColorChange);
+  }
+}
+
+export default {
+  name: "color-scheme-toggler",
+
+  initialize(owner) {
+    this.instance = new TogglerInit(owner);
+  },
+
+  teardown() {
+    this.instance.teardown();
+    this.instance = null;
   },
 };
