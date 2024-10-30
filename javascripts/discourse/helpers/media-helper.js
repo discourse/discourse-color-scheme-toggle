@@ -1,6 +1,4 @@
-import { registerHelper } from "discourse-common/lib/helpers";
-
-registerHelper("media-helper", function ([value]) {
+export default function (value) {
   switch (value) {
     case "dark":
       return "all";
@@ -9,4 +7,4 @@ registerHelper("media-helper", function ([value]) {
     default:
       return "(prefers-color-scheme: dark)";
   }
-});
+}
