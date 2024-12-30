@@ -10,28 +10,18 @@ export function colorSchemeOverride(type) {
     return;
   }
 
-  const logoDarkSrc = document.querySelector(".title picture source");
-
   switch (type) {
     case "dark":
       lightScheme.origMedia = lightScheme.media;
       lightScheme.media = "none";
       darkScheme.origMedia = darkScheme.media;
       darkScheme.media = "all";
-      if (logoDarkSrc) {
-        logoDarkSrc.origMedia = logoDarkSrc.media;
-        logoDarkSrc.media = "all";
-      }
       break;
     case "light":
       lightScheme.origMedia = lightScheme.media;
       lightScheme.media = "all";
       darkScheme.origMedia = darkScheme.media;
       darkScheme.media = "none";
-      if (logoDarkSrc) {
-        logoDarkSrc.origMedia = logoDarkSrc.media;
-        logoDarkSrc.media = "none";
-      }
       break;
     default:
       if (lightScheme.origMedia) {
@@ -42,7 +32,29 @@ export function colorSchemeOverride(type) {
         darkScheme.media = darkScheme.origMedia;
         darkScheme.removeAttribute("origMedia");
       }
-      if (logoDarkSrc?.origMedia) {
+      break;
+  }
+  changeHomeLogo(type);
+}
+
+export function changeHomeLogo(type) {
+  const logoDarkSrc = document.querySelector(".title picture source");
+
+  if (!logoDarkSrc) {
+    return;
+  }
+
+  switch (type) {
+    case "dark":
+      logoDarkSrc.origMedia = logoDarkSrc.media;
+      logoDarkSrc.media = "all";
+      break;
+    case "light":
+      logoDarkSrc.origMedia = logoDarkSrc.media;
+      logoDarkSrc.media = "none";
+      break;
+    default:
+      if (logoDarkSrc.origMedia) {
         logoDarkSrc.media = logoDarkSrc.origMedia;
       }
       break;
