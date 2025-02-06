@@ -2,9 +2,9 @@ import { setOwner } from "@ember/owner";
 import { later, schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { loadColorSchemeStylesheet } from "discourse/lib/color-scheme-picker";
+import { bind } from "discourse/lib/decorators";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { currentThemeId } from "discourse/lib/theme-selector";
-import { bind } from "discourse-common/utils/decorators";
 import ColorSchemeToggler from "../components/color-scheme-toggler";
 import {
   COLOR_SCHEME_OVERRIDE_KEY,
