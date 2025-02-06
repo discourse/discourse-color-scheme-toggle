@@ -3,6 +3,11 @@ import { service } from "@ember/service";
 import ColorSchemeToggler from "../../components/color-scheme-toggler";
 
 export default class TogglerButton extends Component {
+  static shouldRender(args, helper) {
+    const coreSelector = helper.siteSettings.interface_color_selector;
+    return coreSelector === undefined || coreSelector === "disabled";
+  }
+
   @service session;
   @service siteSettings;
 
