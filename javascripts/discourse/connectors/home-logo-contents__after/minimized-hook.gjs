@@ -8,6 +8,11 @@ import {
 } from "../../lib/color-scheme-override";
 
 export default class MinimizedHook extends Component {
+  static shouldRender(args, helper) {
+    const coreSelector = helper.siteSettings.interface_color_selector;
+    return coreSelector === undefined || coreSelector === "disabled";
+  }
+
   @service keyValueStore;
 
   @action
